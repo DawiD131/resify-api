@@ -13,9 +13,8 @@ generator client {
 model User {
   id Int @id @default(autoincrement())
   email String
-  username String
-  name String
-  surname String
+  firstName String
+  lastName String
   pwdHash String
   currentToken String?
 }

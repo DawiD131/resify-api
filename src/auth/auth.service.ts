@@ -8,10 +8,25 @@ import { Response } from 'express';
 import { PrismaService } from '../prisma/prisma.service';
 import { User } from '@prisma/client';
 import { userFilter } from '../filters/userFilter';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private configService: ConfigService,
+  ) {}
+
+  private getSameSiteCookiePolicy(): true | 'none' {
+    const cookiePolicyFromConfig = this.configService.get<'true' | 'none'>(
+      'cookiePolicy.sameSite',
+    );
+    if (cookiePolicyFromConfig === 'true') {
+      return true;
+    } else {
+      return cookiePolicyFromConfig;
+    }
+  }
 
   private createToken(currentTokenId: string): {
     accessToken: string;
@@ -21,7 +36,7 @@ export class AuthService {
     const expiresIn = 60 * 60 * 24;
     const accessToken = sign(
       payload,
-      'JDwoi doi o#OOI F#3fOAoJF*#fooiN hf3OIC OJ o jf#OJCOjoJFo#CO#CoqCMoc#OCMOIDoij oCOMowCOcO#OI3J*#*#*#* FfjCNoo@w*&$08@*&@)*#)(C p9',
+      this.configService.get<string>('jwt.secret'),
       { expiresIn },
     );
     return {
@@ -74,7 +89,7 @@ export class AuthService {
         .cookie('jwt', token.accessToken, {
           secure: true,
           httpOnly: true,
-          sameSite: 'none',
+          sameSite: this.getSameSiteCookiePolicy(),
         })
         .status(200)
         .json(userFilter(user));
@@ -96,7 +111,7 @@ export class AuthService {
       res.clearCookie('jwt', {
         secure: true,
         httpOnly: true,
-        sameSite: 'none',
+        sameSite: this.getSameSiteCookiePolicy(),
       });
       return res.json({ ok: true });
     } catch (e) {

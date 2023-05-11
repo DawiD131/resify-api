@@ -5,11 +5,12 @@ import * as cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: {
-      origin: ['http://localhost:5173', 'https://resifyapi.bieda.it'],
+      origin: process.env.ORIGIN,
       credentials: true,
     },
   });
 
+  console.log(process.env.ORIGIN);
   app.use(cookieParser());
   await app.listen(3000);
 }

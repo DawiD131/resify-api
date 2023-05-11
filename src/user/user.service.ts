@@ -12,7 +12,7 @@ export class UserService {
   async register(newUser: RegisterDto) {
     const isUserExists = await this.prisma.user.count({
       where: {
-        OR: [{ email: newUser.email }, { username: newUser.username }],
+        OR: [{ email: newUser.email }],
       },
     });
 
@@ -24,9 +24,8 @@ export class UserService {
       data: {
         email: newUser.email,
         pwdHash: hashPwd(newUser.pwd),
-        name: newUser.name,
-        surname: newUser.surname,
-        username: newUser.username,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
       },
     });
 
