@@ -26,6 +26,7 @@ export class UserService {
         pwdHash: hashPwd(newUser.pwd),
         firstName: newUser.firstName,
         lastName: newUser.lastName,
+        isBusiness: newUser.isBusiness,
       },
     });
 

@@ -3,4 +3,5 @@ export class RegisterDto {
   pwd: string;
   firstName: string;
   lastName: string;
+  isBusiness: boolean;
 }

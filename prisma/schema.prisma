@@ -17,4 +17,5 @@ model User {
   lastName String
   pwdHash String
   currentToken String?
+  isBusiness Boolean
 }
